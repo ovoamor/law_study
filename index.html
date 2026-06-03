@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚖️ 법조문 빈칸 채우기 ⚖️</title>
+    <style>
+        @font-face {
+            font-family: 'HsGlidingSerif';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2604-1@1.0/HSHwalkongSerif-Regular.woff2') format('woff2');
+            font-weight: normal; font-display: swap;
+        }
+        @font-face {
+            font-family: 'Ridibatang';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+            font-weight: normal; font-display: swap;
+        }
+        
+        h1 { font-family: 'HsGlidingSerif', sans-serif; max-width: 600px; margin: 20px auto; text-align: center; color: #2c3e50; }
+        h2 { font-family: 'Ridibatang', sans-serif; max-width: 600px; margin: 15px auto; font-weight: normal; text-align: center; color: #2c3e50; }
+        body { font-family: 'Ridibatang', sans-serif; max-width: 600px; margin: 50px auto; text-align: center; background-color: #f4f7f6; font-weight: normal; }
+        
+        .card { background: white; padding: 10px 20px 40px 20px ; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 10px auto; width: 90%; max-width: 500px; }
+        .menu-btn, .sub-menu-btn, .nav-btns button { font-family: 'Ridibatang', sans-serif; cursor: pointer; border: none; border-radius: 5px; color: white; font-weight: normal; }
+        .menu-btn { padding: 12px 24px; margin: 5px; background: #B8D0A0; font-size: 1.1rem; }
+        .menu-btn:hover { background: #D0B8A0; }
+        
+        .sub-menu-btn { display: block; width: 80%; padding: 10px; margin: 15px auto; background: white; color: #040404; border: 1px solid #B8D0A0; font-size: 1rem; }
+        .sub-menu-btn:hover { background: #ddebcf; }
+        
+        .nav-btns { margin-top: 20px; }
+        .nav-btns button { padding: 8px 15px; margin: 5px; background: #B8D0A0; border: none; border-radius: 5px; color: white;
+        cursor: pointer;
+        font-family: 'Ridibatang'; width: 100px; text-align: center;}
+        
+        .law-text { font-size: 1.2rem; line-height: 2.5; margin: 20px 0; text-align: left; 
+            overflow-wrap: break-word; word-break: keep-all; padding: 0 10px; }
+        
+        .quiz-input {
+            display: inline-block; width: 140px; margin: 0 5px; padding: 2px 5px;
+            border-bottom: 2px solid #D0B8A0; border-top: none; border-left: none; border-right: none;
+            background: transparent; text-align: center; font-family: 'Ridibatang', serif;
+            font-size: 1.1rem; outline: none; height: 30px; line-height: 30px; vertical-align: bottom;
+        }
+        
+        #result { margin-top: 15px; font-weight: bold; min-height: 25px; }
+        #progress-text { font-weight: bold; color: #7f8c8d; margin-bottom: 5px; font-size: 0.9rem; }
+        .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        #progress-bar { height: 15px; background-color: #F9E4BC; width: 0%; transition: width 0.3s ease; }
+        .footer { font-family: 'HsGlidingSerif', serif; font-size: 0.8rem; color: #95a5a6; margin-top: 40px; text-align: center; opacity: 0.8; }
+        
+        .menu-divider { border: 0; height: 1px; background: #e0e0e0; margin: 30px 0 20px 0; }
+        .usage-guide { text-align: center; padding: 10px 20px; background-color: #f9f9f9; border-radius: 10px; }
+        .usage-guide h3, .usage-guide h4 { font-family: 'Ridibatang', serif; font-weight: normal; margin-bottom: 10px; }
+        .usage-guide p { font-size: 0.85rem; color: #7f8c8d; font-family: 'Ridibatang', serif; margin: 5px 0; }
+        
+        /* 🌟 섹션 초기 상태: JS가 판단하기 전까지 숨김 */
+        #main-menu, #sub-menu-section, #quiz-section { display: none; }
+
+        #law-display, #progress-num {display: inline-block; margin-bottom: 15px; color: #7f8c8d; font-size: 0.9rem;}
+        #law-display {margin-right: 20px}
+        #category-highlight {color:#B8D0A0}
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>⚖️ 법조문 빈칸 채우기 ⚖️</h1>
+        
+        <!-- 메인 메뉴 -->
+        <div id="main-menu">
+            <p>공부할 법을 선택하세요 🤗 </p>
+            <button class="menu-btn" onclick="showSubMenu('헌법')">헌법</button>
+            <button class="menu-btn" onclick="showSubMenu('민법')">민법</button>
+            <button class="menu-btn" onclick="showSubMenu('형법')">형법</button>
+            <button class="menu-btn" onclick="showSubMenu('소송법')">소송법</button>
+            <button class="menu-btn" onclick="showSubMenu('기타법')">기타법</button>
+
+            <hr class="menu-divider">
+            <div class="usage-guide">
+                <h3>💡 이용 방법</h3>
+                <h4>1. 학습할 법과 세부 영역을 선택하세요.</h4>
+                <h4>2. 빈칸에 알맞은 답을 입력하고 <b>[정답 확인]</b>을 누르세요.</h4>
+                <h4>3. 3번 틀릴 경우, 정답을 알려드립니다.</h4>
+                <h4>4. 정답을 맞혀야 다음 조문으로 넘어갈 수 있습니다.</h4>
+                <h4>5. 띄어쓰기는 원문과 동일하게 해야 정답으로 인정됩니다.</h4>
+                <p> 　</p></p>
+                <p>조사로 인한 추측을 방지하고자 을/를, (이)가, 와/과 등의 표기를 하였습니다.</p>
+                <p>비전공자가 만든 웹사이트라 허술한 부분이 많습니다. </p>
+                <p>부족한 부분이 있더라도 양해 부탁드립니다.</p>
+                <p>임용을 준비하시는 모든 분께 도움이 되길 바랍니다.</p>
+                <p> 　</p>
+            </div>
+        </div>
+
+        <!-- 서브 메뉴 -->
+        <div id="sub-menu-section">
+            <h2 id="selected-law-title">과목 이름</h2>
+            <p>학습하려는 부분을 선택하세요 🍀</p>
+            <div id="sub-menu-buttons"></div>
+            <button onclick="goHome()" style="margin-top: 20px; padding: 8px 15px; border: none; border-radius: 5px; background: #B8D0A0; color: white; cursor: pointer; font-family: 'Ridibatang';">처음으로 돌아가기</button>
+        </div>
+
+        <!-- 퀴즈 섹션 -->
+        <div id="quiz-section">
+            <span id="law-display">법 이름</span> 
+            <span id="progress-num">1 / 1</span>
+            <div class="progress-container">
+            <div id="progress-bar"></div></div>
+            <h2 id="article-title">조문 제목</h2>
+            <div id="law-content"></div>
+            <button onclick="checkAnswer()" style="background: #ADD0B3; color: white; border: none; padding: 10px 20px; width: 100px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-family: 'Ridibatang';">정답 확인</button>
+            <div id="result"></div>
+            <div class="nav-btns">
+                <button onclick="prevQuestion()">이전 조문</button>
+                <button onclick="nextQuestion()">다음 조문</button>
+                <button onclick="goBackToSubMenu()" style="background: #D0B8A0;">목록으로</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">아자아자 파이팅💪</div>
+
+    <!-- 데이터 파일 로딩 -->
+    <script src="lawdata_constitution.js"></script>
+    <script src="lawdata_civil.js"></script>
+    <script src="lawdata_criminal.js"></script>
+    <script src="lawdata_procedure.js"></script>
+    <script src="lawdata_others.js"></script>
+
+    <script>
+        const lawData = {
+            "헌법": constitutionData,
+            "민법": civilData,
+            "형법": criminalData,
+            "소송법": procedureData,
+            "기타법": othersData
+        }
+        let currentLaw = "";
+        let currentSubCategory = "";
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let attempts = 0;
+        let userAnswers = []; 
+        let currentView = "home";
+
+        function showSubMenu(lawName) {
+            currentLaw = lawName;
+            currentView = "subMenu";
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('sub-menu-section').style.display = 'block';
+            document.getElementById('quiz-section').style.display = 'none'; 
+            document.getElementById('selected-law-title').innerText = lawName;
+            const container = document.getElementById('sub-menu-buttons');
+            container.innerHTML = ""; 
+            for (let sub in lawData[lawName]) {
+                let btn = document.createElement("button");
+                btn.className = "sub-menu-btn";
+                btn.innerText = sub;
+                btn.onclick = function() { startQuiz(sub); };
+                container.appendChild(btn);
+            }
+            saveCurrentStatus();
+        }
+
+        function startQuiz(subCategory) {
+            currentSubCategory = subCategory;
+            currentIndex = 0;
+            currentView = "quiz";
+            currentQuestions = lawData[currentLaw][currentSubCategory];
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            document.getElementById('sub-menu-section').style.display = 'none';
+            document.getElementById('quiz-section').style.display = 'block';
+            showQuestion();
+            saveCurrentStatus();
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentIndex];
+            document.getElementById('law-display').innerHTML = `지금은 <span id="category-highlight">${currentSubCategory}</span> 공부중 🕊️`;            document.getElementById('progress-num').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / currentQuestions.length) * 100}%`;
+            document.getElementById('article-title').innerText = q.title;
+            const saved = userAnswers[currentIndex];
+            let htmlContent = "";
+            q.content.forEach((paragraph) => {
+                let processedPara = paragraph.replace(/\{(\d+)\}/g, function(match, number) {
+                    let val = saved ? saved[number] : "";
+                    let bgColor = saved ? "background-color: rgb(232, 245, 233);" : "";
+                    return `<input type="text" class="quiz-input" data-answer-idx="${number}" placeholder="입력" value="${val}" style="${bgColor}">`;
+                });
+                htmlContent += `<p class="law-text">${processedPara}</p>`;
+            });
+            document.getElementById('law-content').innerHTML = htmlContent;
+            document.getElementById('result').innerText = "";
+            attempts = 0; 
+        }
+
+        function checkAnswer() {
+            if (attempts >= 3) return;
+            const q = currentQuestions[currentIndex];
+            const inputs = document.querySelectorAll('.quiz-input');
+            let allCorrect = true;
+            let currentInputs = [];
+            inputs.forEach(input => {
+                const val = input.value.trim();
+                currentInputs.push(val);
+                if (val === q.answers[input.getAttribute('data-answer-idx')]) {
+                    input.style.backgroundColor = "#e8f5e9";
+                } else {
+                    input.style.backgroundColor = "#ffebee";
+                    allCorrect = false;
+                }
+            });
+            const res = document.getElementById('result');
+            if (allCorrect) {
+                userAnswers[currentIndex] = currentInputs;
+                res.innerText = "❤️ 정답입니다! 다음 조문으로 넘어가세요."; 
+                res.style.color = "#27ae60";
+                saveCurrentStatus();
+            } else {
+                attempts++;
+                if (attempts >= 3) {
+                    userAnswers[currentIndex] = [...q.answers];
+                    res.innerText = "💡 괜찮아요. 정답을 함께 봅시다.";
+                    res.style.color = "#2c3e50";
+                    inputs.forEach(input => {
+                        input.value = q.answers[input.getAttribute('data-answer-idx')];
+                        input.style.backgroundColor = "#e8f5e9";
+                    });
+                    saveCurrentStatus();
+                } else {
+                    res.innerText = `❌ 틀린 부분이 있어요! (오답 횟수: ${attempts}/3)`;
+                    res.style.color = "#e74c3c";
+                }
+            }
+        }
+
+        function nextQuestion() {
+            // 🌟 정답(연두색) 확인 여부 체크
+            const inputs = document.querySelectorAll('.quiz-input');
+            let canMove = true;
+            inputs.forEach(input => {
+                if (input.style.backgroundColor !== "rgb(232, 245, 233)") canMove = false;
+            });
+            if (!canMove) { alert("정답을 입력해주세요 😊"); return; }
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                showQuestion();
+                saveCurrentStatus();
+            } else { alert("마지막 조문입니다. 고생하셨습니다. 👏"); }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                // 🌟 [중요] 이전 버튼 제약 로직 복구
+                if (userAnswers[currentIndex] !== null) {
+                    currentIndex--;
+                    showQuestion();
+                    saveCurrentStatus();
+                } else {
+                    alert("현재 조문의 정답을 먼저 확인해야 이전으로 갈 수 있어요.");
+                }
+            }
+        }
+
+        function goBackToSubMenu() {
+            currentView = "subMenu";
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('sub-menu-section').style.display = 'block';
+            saveCurrentStatus();
+        }
+
+        function goHome() {
+            currentView = "home";
+            document.getElementById('sub-menu-section').style.display = 'none';
+            document.getElementById('main-menu').style.display = 'block';
+            saveCurrentStatus();
+        }
+
+        function saveCurrentStatus() {
+            localStorage.setItem('lawQuizStatus', JSON.stringify({
+            currentLaw, 
+            currentSubCategory, 
+            currentIndex, 
+            userAnswers, 
+            currentView 
+            }));
+    }
+
+ function loadStatus() {
+        const saved = localStorage.getItem('lawQuizStatus');
+        if (saved) {
+            const status = JSON.parse(saved);
+            currentLaw = status.currentLaw;
+            currentSubCategory = status.currentSubCategory;
+            currentIndex = status.currentIndex;
+            userAnswers = status.userAnswers || [];
+            currentView = status.currentView || "home"; // 🌟 저장된 뷰 불러오기
+
+            // 🌟 뷰 상태에 따라 화면 분기
+            if (currentView === "quiz" && currentLaw && currentSubCategory) {
+                currentQuestions = lawData[currentLaw][currentSubCategory];
+                document.getElementById('main-menu').style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+                showQuestion();
+            } else if (currentView === "subMenu" && currentLaw) {
+                showSubMenu(currentLaw);
+            } else {
+                document.getElementById('main-menu').style.display = 'block';
+            }
+        } else {
+            document.getElementById('main-menu').style.display = 'block';
+        }
+    }
+    window.onload = loadStatus;
+</script>
+    </script>
+</body>
+</html>
